@@ -64,12 +64,13 @@ final class FakeSmsEmailTransport extends AbstractTransport
             throw new UnsupportedMessageTypeException(__CLASS__, SmsMessage::class, $message);
         }
 
+        $content = $message->getNotification()->getContent() ?: $message->getSubject();
         $email = (new Email())
             ->from($message->getFrom() ?: $this->from)
             ->to($this->to)
-            ->subject(sprintf('New SMS on phone number: %s', $message->getPhone()))
-            ->html($message->getSubject())
-            ->text($message->getSubject());
+            ->subject(sprintf('[New SMS for %s] - %s', $message->getPhone(), $message->getSubject()))
+            ->html($content)
+            ->text($content);
 
         if ('default' !== $transportName = $this->getEndpoint()) {
             $email->getHeaders()->addTextHeader('X-Transport', $transportName);

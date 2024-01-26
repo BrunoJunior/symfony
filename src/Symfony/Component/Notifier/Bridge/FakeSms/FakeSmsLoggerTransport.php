@@ -56,6 +56,7 @@ final class FakeSmsLoggerTransport extends AbstractTransport
         }
 
         $this->logger->info(sprintf('New SMS on phone number: %s', $message->getPhone()));
+        $this->logger->info($message->getNotification()->getContent() ?: $message->getSubject());
 
         return new SentMessage($message, (string) $this);
     }
